@@ -3,7 +3,7 @@
 Automated with API requests, not using selenium or any other webdriver.  
 Bypasses captcha and bots all available services for a given video.  
 ### Binaries (untested) available for windows in bin
-![](https://i.imgur.com/gntZJsg.png)
+![](https://i.imgur.com/98CeI0u.png)
 ## Compiling the project
 
 Clone the project

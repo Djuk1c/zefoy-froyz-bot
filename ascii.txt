@@ -4,6 +4,6 @@
  | (_| |   | | | |_| | |   <  | | | (__   _  | (_| | |  __/  \ V /
   \__,_|  _/ |  \__,_| |_|\_\ |_|  \___| (_)  \__,_|  \___|   \_/
          |__/
-					  Zefoy/Froyz Automation
+                      Zefoy/Froyz Automation
                             version 1.0
 

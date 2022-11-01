@@ -4,6 +4,7 @@ import (
 	b64 "encoding/base64"
 	"errors"
 	"math/rand"
+	"regexp"
 	"strconv"
 	"strings"
 	"time"
@@ -160,7 +161,8 @@ func (b *Bot) GetBetaKey() (timer int) {
 		return 15
 	} else if strings.Contains(decode, "Checking Timer") { // Means we're on timer
 		temp := strings.Split(decode, "\n")[3]
-		temp = temp[strings.IndexByte(temp, '=')+1 : len(temp)-1]
+		re := regexp.MustCompile(`[-]?\d[\d,]*[\.]?[\d{2}]*`)
+		temp = re.FindAllString(temp, -1)[0]
 		timer, _ := strconv.Atoi(temp)
 		Log("BETA_TIMER: "+strconv.Itoa(timer), "boldGreen", b.service)
 		return timer
@@ -204,8 +206,9 @@ func (b *Bot) Submit() (timer int) {
 		AddToCount()
 	} else if strings.Contains(decode, "ltm=") { // Means we're on timer
 		// Sometimes ltm=939; ends up here
-		temp := strings.Split(decode, "\n")[3]
-		temp = temp[strings.IndexByte(temp, '=')+1 : len(temp)-1]
+		temp := strings.Split(decode, "\n")[2] // 2?
+		re := regexp.MustCompile(`[-]?\d[\d,]*[\.]?[\d{2}]*`)
+		temp = re.FindAllString(temp, -1)[0]
 		timer, _ := strconv.Atoi(temp)
 		Log("BETA_TIMER: "+strconv.Itoa(timer), "boldGreen", b.service)
 		return timer
@@ -229,7 +232,7 @@ func (b *Bot) Start() {
 	}
 
 	for {
-		time.Sleep((time.Duration(timer) + 2) * time.Second)
+		time.Sleep(time.Duration(timer) * time.Second)
 		timer = 0
 
 		t := b.GetBetaKey()
