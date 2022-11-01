@@ -19,6 +19,7 @@ var (
 		"views":     "c2VuZC9mb2xsb3dlcnNfdGlrdG9V",
 		"hearts":    "c2VuZE9nb2xsb3dlcnNfdGlrdG9r",
 		"followers": "c2VuZF9mb2xsb3dlcnNfdGlrdG9r",
+		"favorites": "c2VuZF9mb2xsb3dlcnNfdGlrdG9L",
 	}
 	aweme_id string
 	count    uint32
@@ -34,6 +35,7 @@ func main() {
 	go Thread("views")
 	go Thread("hearts")
 	go Thread("followers")
+	go Thread("favorites")
 
 	select {} // Infinite "sleep" on main thread
 }
