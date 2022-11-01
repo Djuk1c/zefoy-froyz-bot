@@ -7,8 +7,8 @@ import (
 )
 
 const (
-	//url = "https://zefoy.com/"
-	url         = "https://froyz.com/"
+	url = "https://zefoy.com/"
+	//url         = "https://froyz.com/"
 	captcha_url = "a1ef290e2636bf553f39817628b6ca49.php"
 )
 

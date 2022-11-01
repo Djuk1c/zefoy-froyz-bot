@@ -153,6 +153,9 @@ func (b *Bot) GetBetaKey() (timer int) {
 	if strings.Contains(decode, "This service is currently not working") {
 		LogErr(errors.New("This service is currently disabled."), b.service)
 		return -2
+	} else if strings.Contains(decode, "Too many requests. Please slow down") {
+		LogErr(errors.New("Too many requests, waiting 15 seconds."), b.service)
+		return 15
 	} else if strings.Contains(decode, "Session expired. Please re-login") {
 		LogErr(errors.New("Session expired, waiting 15 seconds"), b.service)
 		return -1

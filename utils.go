@@ -52,7 +52,7 @@ func Log(msg string, clr string, service string) {
 }
 
 func LogErr(msg error, service string) {
-	fmt.Printf("\033[31m[%s] : [%s]\n\033[0m", service, msg)
+	fmt.Printf("\033[31m[%s]: [%s]\n\033[0m", service, msg)
 }
 
 func AddToCount() {
