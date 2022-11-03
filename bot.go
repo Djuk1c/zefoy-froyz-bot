@@ -111,7 +111,7 @@ func (b *Bot) GetAlphaKey() (valid bool) {
 	req.SetRequestURI(url)
 	req.Header.SetMethod("POST")
 	req.Header.SetContentType("application/x-www-form-urlencoded")
-	req.SetBodyString("captcha_secure=" + b.captcha + "&r75619cf53f5a5d7aa6af82edfec3bf0=")
+	req.SetBodyString("captcha_secure=" + b.captcha + "&r75619cf53f5a5d7ba6af82edfec3bf0=")
 	SetHeaders(req, b.sessid)
 	b.client.DoDeadline(req, resp, time.Now().Add(CONN_TIMEOUT))
 

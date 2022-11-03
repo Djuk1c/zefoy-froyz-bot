@@ -3,7 +3,12 @@ package main
 import (
 	"fmt"
 	"io/ioutil"
+	neturl "net/url"
 	"os"
+	"strconv"
+	"strings"
+
+	screen "github.com/aditya43/clear-shell-screen-golang"
 )
 
 const (
@@ -27,11 +32,13 @@ var (
 )
 
 func main() {
+	screen.Clear()
 	CheckArguments()
 	banner, _ := ioutil.ReadFile("ascii.txt")
 	boldRed.Printf(string(banner))
-	boldRed.Printf("Enter video_id > ")
+	boldRed.Printf("Enter URL/VideoID > ")
 	fmt.Scanln(&aweme_id)
+	aweme_id = ProcessUrl(aweme_id)
 
 	go Thread("shares")
 	go Thread("views")
@@ -52,5 +59,14 @@ func CheckArguments() {
 		if os.Args[1] == "--debug" {
 			DEBUG_2 = true
 		}
+	}
+}
+
+func ProcessUrl(link string) string {
+	if _, err := strconv.Atoi(link); err == nil {
+		return link
+	} else {
+		u, _ := neturl.Parse(link)
+		return strings.Split(u.Path, "/")[3]
 	}
 }
