@@ -57,5 +57,5 @@ func LogErr(msg error, service string) {
 
 func AddToCount() {
 	atomic.AddUint32(&count, 1)
-	boldGreen.Printf("Successfull requests: %d\n", atomic.LoadUint32(&count))
+	boldGreen.Printf("Successful requests: %d\n", atomic.LoadUint32(&count))
 }
