@@ -21,11 +21,11 @@ var (
 	DEBUG    = true  // Basic logging
 	DEBUG_2  = false // Additional logging (request responses)
 	services = map[string]string{
-		"shares":    "c2VuZC9mb2xsb3dlcnNfdGlrdG9s",
 		"views":     "c2VuZC9mb2xsb3dlcnNfdGlrdG9V",
 		"hearts":    "c2VuZE9nb2xsb3dlcnNfdGlrdG9r",
 		"followers": "c2VuZF9mb2xsb3dlcnNfdGlrdG9r",
 		"favorites": "c2VuZF9mb2xsb3dlcnNfdGlrdG9L",
+		"shares":    "c2VuZC9mb2xsb3dlcnNfdGlrdG9s",
 	}
 	aweme_id string
 	count    uint32
@@ -40,11 +40,9 @@ func main() {
 	fmt.Scanln(&aweme_id)
 	aweme_id = ProcessUrl(aweme_id)
 
-	go Thread("shares")
-	go Thread("views")
-	go Thread("hearts")
-	go Thread("followers")
-	go Thread("favorites")
+	for i, _ := range services {
+		go Thread(i)
+	}
 
 	select {} // Infinite "sleep" on main thread
 }
