@@ -1,4 +1,5 @@
 # Zefoy/Froyz fully automated
+## (PATCHED, WILL FIX WHEN HAVE TIME)
 
 Automated with API requests, not using selenium or any other webdriver.  
 Bypasses captcha and bots all available services for a given video.  
