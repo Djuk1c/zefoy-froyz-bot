@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"math/rand"
+	"os"
 	"regexp"
 	"strconv"
 	"strings"
@@ -184,6 +185,7 @@ func (b *Bot) GetBetaKey() (timer int) {
 	if DEBUG_2 {
 		Log("BETA_KEY_RESPONSE:\n"+decode, "yellow", b.service)
 	}
+	// TODO: Clear these IF's for the love of god
 	if strings.Contains(decode, "This service is currently not working") {
 		LogErr(errors.New("This service is currently disabled."), b.service)
 		return -2
@@ -203,6 +205,9 @@ func (b *Bot) GetBetaKey() (timer int) {
 		timer, _ := strconv.Atoi(temp)
 		Log("BETA_TIMER: "+strconv.Itoa(timer), "boldGreen", b.service)
 		return timer
+	} else if strings.Contains(decode, "Not found video.") {
+		LogErr(errors.New("Video not found (Zefoy takes some time to process new videos, try later)."), b.service)
+		os.Exit(0)
 	}
 	beta := doc.Find("input").Attrs()["name"]
 	b.beta = beta
@@ -259,10 +264,10 @@ func (b *Bot) Submit() (timer int) {
 func (b *Bot) Start() {
 	// Hacky but it works ¯\_(ツ)_/¯
 	timer := 0
-	if !b.GetSessionID() { //PHPSESS Not found
-		return
-	}
 	for { // Google ocr can get timed out
+		if !b.GetSessionID() { //PHPSESS Not found
+			return
+		}
 		if !b.GetCaptcha() {
 			time.Sleep(20 * time.Second)
 			continue
