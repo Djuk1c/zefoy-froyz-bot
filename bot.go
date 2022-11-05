@@ -65,7 +65,7 @@ func (b *Bot) GetSessionID() (validProxy bool) {
 	return true
 }
 
-func (b *Bot) GetCaptcha() {
+func (b *Bot) GetCaptcha() bool {
 	// Get image
 	req := fasthttp.AcquireRequest()
 	resp := fasthttp.AcquireResponse()
@@ -91,6 +91,13 @@ func (b *Bot) GetCaptcha() {
 	fasthttp.Do(creq, cresp)
 	resJson, _ := gabs.ParseJSON(cresp.Body())
 	container, _ := resJson.S("responses", "textAnnotations", "description").Children()
+	if len(container) == 0 {
+		if DEBUG {
+			LogErr(errors.New("Google OCR API timeout, waiting 20 seconds."), b.service)
+		}
+		//fmt.Println(resJson.String())
+		return false
+	}
 	c := container[0].Data()
 	captcha := fmt.Sprintf("%v", c.([]interface{})[0].(string))
 	captcha = strings.ToLower(captcha)
@@ -128,6 +135,7 @@ func (b *Bot) GetCaptcha() {
 	defer fasthttp.ReleaseResponse(resp)
 	defer fasthttp.ReleaseRequest(creq)
 	defer fasthttp.ReleaseResponse(cresp)
+	return true
 }
 
 func (b *Bot) GetAlphaKey() (valid bool) {
@@ -254,7 +262,13 @@ func (b *Bot) Start() {
 	if !b.GetSessionID() { //PHPSESS Not found
 		return
 	}
-	b.GetCaptcha()
+	for { // Google ocr can get timed out
+		if !b.GetCaptcha() {
+			time.Sleep(20 * time.Second)
+			continue
+		}
+		break
+	}
 	if !b.GetAlphaKey() { // Zefoy responded empty, IP banned/Captcha wrong
 		time.Sleep(15 * time.Second)
 		b.Start()
