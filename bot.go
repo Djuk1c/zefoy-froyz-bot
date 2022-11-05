@@ -3,6 +3,7 @@ package main
 import (
 	b64 "encoding/base64"
 	"errors"
+	"fmt"
 	"math/rand"
 	"regexp"
 	"strconv"
@@ -76,27 +77,52 @@ func (b *Bot) GetCaptcha() {
 	req.SetRequestURI(captchaUrl)
 	b.client.DoDeadline(req, resp, time.Now().Add(CONN_TIMEOUT))
 
-	// Some guys OCR API (TODO: Implement own ocr w gosserect or something)
+	// Google vision
 	imgCode := b64.StdEncoding.EncodeToString(resp.Body())
 	json := gabs.New()
-	json.Set(string(imgCode), "img")
+	json.Set(string(imgCode), "requests", "image", "content")
+	json.Set("TEXT_DETECTION", "requests", "features", "type")
 	creq := fasthttp.AcquireRequest()
 	cresp := fasthttp.AcquireResponse()
-	creq.SetRequestURI("https://api.sandroputraa.com/zefoy.php")
+	creq.SetRequestURI("https://content-vision.googleapis.com/v1/images:annotate?alt=json&key=AIzaSyAa8yy0GdcGPHdtD083HiGGx_S0vMPScDM")
 	creq.Header.SetMethod("POST")
-	creq.Header.Set("Content-Type", "application/json")
-	creq.Header.Set("Auth", "sandrocods")
-	creq.Header.Set("Host", "api.sandroputraa.com")
-	creq.Header.Set("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/101.0.4951.54 Safari/537.36")
+	creq.Header.Set("x-origin", "https://explorer.apis.google.com")
 	creq.SetBodyString(json.String())
 	fasthttp.Do(creq, cresp)
 	resJson, _ := gabs.ParseJSON(cresp.Body())
-	captcha := resJson.Search("Data").String()
-	captcha = strings.ToLower(captcha[1 : len(captcha)-1])
+	container, _ := resJson.S("responses", "textAnnotations", "description").Children()
+	c := container[0].Data()
+	captcha := fmt.Sprintf("%v", c.([]interface{})[0].(string))
+	captcha = strings.ToLower(captcha)
 	b.captcha = captcha
 	if DEBUG {
 		Log(captcha, "green", b.service)
 	}
+
+	// Some guys OCR API (TODO: Implement own ocr w gosserect or something)
+	//imgCode := b64.StdEncoding.EncodeToString(resp.Body())
+	//json := gabs.New()
+	//json.Set(string(imgCode), "img")
+	//creq := fasthttp.AcquireRequest()
+	//cresp := fasthttp.AcquireResponse()
+	//creq.SetRequestURI("https://api.sandroputraa.com/zefoy.php")
+	//creq.Header.SetMethod("POST")
+	//creq.Header.Set("Content-Type", "application/json")
+	//creq.Header.Set("Auth", "sandrocods")
+	//creq.Header.Set("Host", "api.sandroputraa.com")
+	//creq.Header.Set("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/101.0.4951.54 Safari/537.36")
+	//creq.SetBodyString(json.String())
+	//fasthttp.Do(creq, cresp)
+	//if DEBUG_2 {
+	//	Log("CAPTCHA API RESPONSE: "+string(cresp.Body()), "yellow", b.service)
+	//}
+	//resJson, _ := gabs.ParseJSON(cresp.Body())
+	//captcha := resJson.Search("Data").String()
+	//captcha = strings.ToLower(captcha[1 : len(captcha)-1])
+	//b.captcha = captcha
+	//if DEBUG {
+	//	Log(captcha, "green", b.service)
+	//}
 
 	defer fasthttp.ReleaseRequest(req)
 	defer fasthttp.ReleaseResponse(resp)
