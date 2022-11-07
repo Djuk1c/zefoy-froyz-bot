@@ -54,18 +54,18 @@ func CheckOS() {
 func Log(msg string, clr string, service string) {
 	switch clr {
 	case "green":
-		fmt.Fprintf(w, "|%s|: [%s]\n", color.GreenString(service), color.GreenString(msg))
+		fmt.Fprintf(w, "[%s]: [%s]\n", color.GreenString(service), color.GreenString(msg))
 	case "yellow":
-		fmt.Fprintf(w, "|%s|: [%s]\n", color.YellowString(service), color.YellowString(msg))
+		fmt.Fprintf(w, "[%s]: [%s]\n", color.YellowString(service), color.YellowString(msg))
 	case "cyan":
-		fmt.Fprintf(w, "|%s|: [%s]\n", boldCyan(service), boldCyan(msg))
+		fmt.Fprintf(w, "[%s]: [%s]\n", boldCyan(service), boldCyan(msg))
 	case "boldGreen":
-		fmt.Fprintf(w, "|%s|: [%s]\n", boldGreen(service), boldGreen(msg))
+		fmt.Fprintf(w, "[%s]: [%s]\n", boldGreen(service), boldGreen(msg))
 	}
 }
 
 func LogErr(msg error, service string) {
-	fmt.Fprintf(w, "|%s|: [%s]\n", boldRed(service), boldRed(msg))
+	fmt.Fprintf(w, "[%s]: [%s]\n", boldRed(service), boldRed(msg))
 }
 
 func AddToCount() {

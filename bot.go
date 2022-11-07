@@ -209,10 +209,15 @@ func (b *Bot) GetBetaKey() (timer int) {
 		LogErr(errors.New("Video not found."), b.service)
 		os.Exit(0)
 	}
-	beta := doc.Find("input").Attrs()["name"]
-	b.beta = beta
+	root := doc.Find("input").Attrs()
+	if val, ok := root["name"]; ok {
+		b.beta = val
+	} else {
+		LogErr(errors.New("Beta key not found, waiting 15 seconds."), b.service)
+		return 15
+	}
 	if DEBUG {
-		Log("BETA_KEY: "+beta, "green", b.service)
+		Log("BETA_KEY: "+b.beta, "green", b.service)
 	}
 
 	defer fasthttp.ReleaseRequest(req)
