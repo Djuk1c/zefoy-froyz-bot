@@ -208,6 +208,9 @@ func (b *Bot) GetBetaKey() (timer int) {
 	} else if strings.Contains(decode, "Not found video.") {
 		LogErr(errors.New("Video not found."), b.service)
 		os.Exit(0)
+	} else if !strings.Contains(decode, "name") {
+		LogErr(errors.New("Unknown error, waiting 15 seconds"), b.service)
+		return 15
 	}
 	root := doc.Find("input").Attrs()
 	if val, ok := root["name"]; ok {
