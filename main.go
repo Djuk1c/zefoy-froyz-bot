@@ -44,8 +44,8 @@ func main() {
                        version 1.3
 	
 	`
-	fmt.Printf("%s", boldRed(string(banner)))
-	fmt.Printf("%s", boldRed("\nEnter URL/VideoID > "))
+	fmt.Fprintf(w, "%s", boldRed(string(banner)))
+	fmt.Fprintf(w, "%s", boldRed("\nEnter URL/VideoID > "))
 	fmt.Scanln(&aweme_id)
 	aweme_id = ProcessUrl(aweme_id)
 
