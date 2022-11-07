@@ -3,7 +3,11 @@ package main
 import (
 	b64 "encoding/base64"
 	"fmt"
+	"io"
 	urlp "net/url"
+	"os"
+	"runtime"
+	"strconv"
 	"sync/atomic"
 
 	"github.com/fatih/color"
@@ -11,9 +15,10 @@ import (
 )
 
 var (
-	boldGreen = color.New(color.FgGreen, color.Bold)
-	boldRed   = color.New(color.FgRed, color.Bold)
-	boldCyan  = color.New(color.FgCyan, color.Bold)
+	boldGreen = color.New(color.FgGreen, color.Bold).SprintFunc()
+	boldRed   = color.New(color.FgRed, color.Bold).SprintFunc()
+	boldCyan  = color.New(color.FgCyan, color.Bold).SprintFunc()
+	w         io.Writer
 )
 
 func ReverseString(str string) (result string) {
@@ -37,25 +42,33 @@ func SetHeaders(req *fasthttp.Request, cookie ...string) {
 		req.Header.Set("cookie", cookie[0])
 	}
 }
+func CheckOS() {
+	switch runtime.GOOS {
+	case "windows":
+		w = color.Output
+	case "linux":
+		w = os.Stdout
+	}
+}
 
 func Log(msg string, clr string, service string) {
 	switch clr {
 	case "green":
-		color.Green("[%s]: [%s]", service, msg)
+		fmt.Fprintf(w, "|%s|: [%s]\n", color.GreenString(service), color.GreenString(msg))
 	case "yellow":
-		color.Yellow("[%s]: [%s]", service, msg)
+		fmt.Fprintf(w, "|%s|: [%s]\n", color.YellowString(service), color.YellowString(msg))
 	case "cyan":
-		boldCyan.Printf("[%s]: [%s]\n", service, msg)
+		fmt.Fprintf(w, "|%s|: [%s]\n", boldCyan(service), boldCyan(msg))
 	case "boldGreen":
-		boldGreen.Printf("[%s]: [%s]\n", service, msg)
+		fmt.Fprintf(w, "|%s|: [%s]\n", boldGreen(service), boldGreen(msg))
 	}
 }
 
 func LogErr(msg error, service string) {
-	fmt.Printf("\033[31m[%s]: [%s]\n\033[0m", service, msg)
+	fmt.Fprintf(w, "|%s|: [%s]\n", boldRed(service), boldRed(msg))
 }
 
 func AddToCount() {
 	atomic.AddUint32(&count, 1)
-	boldGreen.Printf("Successful requests: %d\n", atomic.LoadUint32(&count))
+	fmt.Fprintf(w, "%s: %s\n", boldGreen("Successful requests"), boldGreen(strconv.Itoa(int(atomic.LoadUint32(&count)))))
 }

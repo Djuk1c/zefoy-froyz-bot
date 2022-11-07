@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"io/ioutil"
 	neturl "net/url"
 	"os"
 	"strconv"
@@ -23,7 +22,6 @@ var (
 	services = map[string]string{
 		"views":     "c2VuZC9mb2xsb3dlcnNfdGlrdG9V",
 		"hearts":    "c2VuZE9nb2xsb3dlcnNfdGlrdG9r",
-		"followers": "c2VuZF9mb2xsb3dlcnNfdGlrdG9r",
 		"favorites": "c2VuZF9mb2xsb3dlcnNfdGlrdG9L",
 		"shares":    "c2VuZC9mb2xsb3dlcnNfdGlrdG9s",
 	}
@@ -33,10 +31,21 @@ var (
 
 func main() {
 	screen.Clear()
+	CheckOS()
 	CheckArguments()
-	banner, _ := ioutil.ReadFile("ascii.txt")
-	boldRed.Printf(string(banner))
-	boldRed.Printf("Enter URL/VideoID > ")
+	banner := `
+        __  _         __    _              __
+   ____/ / (_)__  __ / /__ (_)_____   ____/ /___  _   __
+  / __  / / // / / // //_// // ___/  / __  // _ \| | / /
+ / /_/ / / // /_/ // ,<  / // /__ _ / /_/ //  __/| |/ /
+ \__,_/_/ / \__,_//_/|_|/_/ \___/(_)\__,_/ \___/ |___/
+     /___/
+                  Zefoy/Froyz Automation
+                       version 1.3
+	
+	`
+	fmt.Printf("%s", boldRed(string(banner)))
+	fmt.Printf("%s", boldRed("\nEnter URL/VideoID > "))
 	fmt.Scanln(&aweme_id)
 	aweme_id = ProcessUrl(aweme_id)
 

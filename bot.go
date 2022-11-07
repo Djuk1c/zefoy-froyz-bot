@@ -206,7 +206,7 @@ func (b *Bot) GetBetaKey() (timer int) {
 		Log("BETA_TIMER: "+strconv.Itoa(timer), "boldGreen", b.service)
 		return timer
 	} else if strings.Contains(decode, "Not found video.") {
-		LogErr(errors.New("Video not found (Zefoy takes some time to process new videos, try later)."), b.service)
+		LogErr(errors.New("Video not found."), b.service)
 		os.Exit(0)
 	}
 	beta := doc.Find("input").Attrs()["name"]
